@@ -7,25 +7,6 @@ from finances_bff.schemas import file as file_schemas
 router = APIRouter()
 
 
-@router.get("/file/health", tags=["health"])
-async def health_check(
-    file_service_client: httpx.AsyncClient = Depends(get_file_service_client),
-):
-    """
-    Health check endpoint.
-    """
-    try:
-        response = await file_service_client.get("/health")
-        response.raise_for_status()
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=503, detail=f"File service is unavailable: {str(e)}"
-        )
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code, detail=str(e))
-    return {"status": "ok", "file_service": response.json()}
-
-
 @router.post("/upload/zip", tags=["file"])
 async def upload_zip(
     zip_file: UploadFile,

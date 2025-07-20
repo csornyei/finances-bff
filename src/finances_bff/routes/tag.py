@@ -7,25 +7,6 @@ from finances_bff.schemas import tag as tag_schemas
 router = APIRouter()
 
 
-@router.get("/tags/health", tags=["health"])
-async def health_check(
-    tag_service_client: httpx.AsyncClient = Depends(get_tag_service_client),
-):
-    """
-    Health check endpoint.
-    """
-    try:
-        response = await tag_service_client.get("/health")
-        response.raise_for_status()
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=503, detail=f"Tag service is unavailable: {str(e)}"
-        )
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code, detail=str(e))
-    return {"status": "ok", "tag_service": response.json()}
-
-
 @router.get("/tags/", response_model=list[tag_schemas.TagOut])
 async def read_tags(
     tag_service_client: httpx.AsyncClient = Depends(get_tag_service_client),

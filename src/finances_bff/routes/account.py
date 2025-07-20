@@ -7,25 +7,6 @@ from finances_bff.schemas import account as account_schemas
 router = APIRouter()
 
 
-@router.get("/account/health", tags=["health"])
-async def health_check(
-    account_service_client: httpx.AsyncClient = Depends(get_account_service_client),
-):
-    """
-    Health check endpoint.
-    """
-    try:
-        response = await account_service_client.get("/health")
-        response.raise_for_status()
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=503, detail=f"Account service is unavailable: {str(e)}"
-        )
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code, detail=str(e))
-    return {"status": "ok", "account_service": response.json()}
-
-
 @router.get("/accounts/", response_model=list[account_schemas.AccountOut])
 async def read_accounts(
     params: account_schemas.AccountsFilter = Depends(),

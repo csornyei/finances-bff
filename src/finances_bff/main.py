@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, Request
 from finances_bff.logger import logger
 from finances_bff.routes.account import router as account_router
 from finances_bff.routes.file import router as file_router
+from finances_bff.routes.health import router as health_router
 from finances_bff.routes.statement import router as statement_router
 from finances_bff.routes.tag import router as tag_router
 
@@ -96,11 +97,4 @@ app.include_router(account_router, prefix="/api/v1", tags=["account"])
 app.include_router(file_router, prefix="/api/v1", tags=["file"])
 app.include_router(statement_router, prefix="/api/v1", tags=["statement"])
 app.include_router(tag_router, prefix="/api/v1", tags=["tag"])
-
-
-@app.get("/health", tags=["health"])
-async def health_check():
-    """
-    Health check endpoint.
-    """
-    return {"status": "ok"}
+app.include_router(health_router, tags=["health"])

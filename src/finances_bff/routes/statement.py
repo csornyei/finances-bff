@@ -7,25 +7,6 @@ from finances_bff.schemas import statement as statement_schemas
 router = APIRouter()
 
 
-@router.get("/statements/health", tags=["health"])
-async def health_check(
-    statement_service_client: httpx.AsyncClient = Depends(get_statement_service_client),
-):
-    """
-    Health check endpoint.
-    """
-    try:
-        response = await statement_service_client.get("/health")
-        response.raise_for_status()
-    except httpx.RequestError as e:
-        raise HTTPException(
-            status_code=503, detail=f"Statement service is unavailable: {str(e)}"
-        )
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code, detail=str(e))
-    return {"status": "ok", "statement_service": response.json()}
-
-
 @router.post("/statements/", response_model=statement_schemas.StatementOut)
 async def create_statement(
     statement: statement_schemas.StatementCreate,

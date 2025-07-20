@@ -18,6 +18,6 @@ ENV VIRTUAL_ENV=/app/.venv \
 
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
-COPY src/PROJECT_NAME ./PROJECT_NAME
+COPY src/finances_bff ./finances_bff
 
-ENTRYPOINT ["fastapi", "run", "PROJECT_NAME/main.py"]
+ENTRYPOINT ["fastapi", "run", "finances_bff/main.py"]

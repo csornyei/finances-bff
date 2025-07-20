@@ -1,5 +1,5 @@
 [project]
-name = "PROJECT_NAME"
+name = "finances_bff"
 version = "0.0.0"
 description = ""
 authors = [{ name = "Mate Csornyei", email = "mate@csornyei.com" }]
@@ -11,6 +11,7 @@ dependencies = [
     "asyncpg (>=0.30.0,<0.31.0)",
     "greenlet (>=3.2.0,<4.0.0)",
     "finances_shared",
+    "httpx>=0.28.1",
 ]
 
 [dependency-groups]

@@ -1,0 +1,10 @@
+services:
+  project:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: project
+    restart: always
+    ports:
+      - "8080:8000"
+

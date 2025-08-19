@@ -29,7 +29,8 @@ async def upload_zip(
 
     try:
         response = await file_service_client.post(
-            "/api/v1/upload/zip", files={"file": (file_name, file_content)}
+            "/api/v1/upload/zip",
+            files={"zip_file": (file_name, file_content)},
         )
         response.raise_for_status()
         return {"message": "Zip file uploaded successfully"}
@@ -59,7 +60,7 @@ async def upload_csv(
 
     try:
         response = await file_service_client.post(
-            "/api/v1/upload/csv", files={"file": (file_name, file_content)}
+            "/api/v1/upload/csv", files={"csv_file": (file_name, file_content)}
         )
         response.raise_for_status()
         return {"message": "CSV file uploaded successfully"}

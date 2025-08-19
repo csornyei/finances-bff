@@ -20,30 +20,75 @@ async def health_check(
     """
     Health check endpoint for the BFF.
     """
+
+    response = {"status": "ok", "services": {}}
     try:
         account_response = await account_service_client.get("/health")
-        file_response = await file_service_client.get("/health")
-        statement_response = await statement_service_client.get("/health")
-        tag_response = await tag_service_client.get("/health")
+
         account_response.raise_for_status()
+        response["services"]["account_service"] = account_response.json()
+    except httpx.RequestError as e:
+        response["services"]["account_service"] = {
+            "status": "error",
+            "message": f"Account service is unavailable: {str(e)}",
+        }
+    except httpx.HTTPStatusError as e:
+        response["services"]["account_service"] = {
+            "status": "error",
+            "message": str(e),
+            "status_code": e.response.status_code,
+        }
+
+    try:
+        file_response = await file_service_client.get("/health")
         file_response.raise_for_status()
+        response["services"]["file_service"] = file_response.json()
+    except httpx.RequestError as e:
+        response["services"]["file_service"] = {
+            "status": "error",
+            "message": f"File service is unavailable: {str(e)}",
+        }
+    except httpx.HTTPStatusError as e:
+        response["services"]["file_service"] = {
+            "status": "error",
+            "message": str(e),
+            "status_code": e.response.status_code,
+        }
+
+    try:
+        statement_response = await statement_service_client.get("/health")
         statement_response.raise_for_status()
+        response["services"]["statement_service"] = statement_response.json()
+    except httpx.RequestError as e:
+        response["services"]["statement_service"] = {
+            "status": "error",
+            "message": f"Statement service is unavailable: {str(e)}",
+        }
+    except httpx.HTTPStatusError as e:
+        response["services"]["statement_service"] = {
+            "status": "error",
+            "message": str(e),
+            "status_code": e.response.status_code,
+        }
+
+    try:
+        tag_response = await tag_service_client.get("/health")
         tag_response.raise_for_status()
+        response["services"]["tag_service"] = tag_response.json()
 
     except httpx.RequestError as e:
-        raise HTTPException(status_code=503, detail=f"Service is unavailable: {str(e)}")
+        response["services"]["tag_service"] = {
+            "status": "error",
+            "message": f"Tag service is unavailable: {str(e)}",
+        }
     except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=e.response.status_code, detail=str(e))
+        response["services"]["tag_service"] = {
+            "status": "error",
+            "message": str(e),
+            "status_code": e.response.status_code,
+        }
 
-    return {
-        "status": "ok",
-        "services": {
-            "account_service": account_response.json(),
-            "file_service": file_response.json(),
-            "statement_service": statement_response.json(),
-            "tag_service": tag_response.json(),
-        },
-    }
+    return response
 
 
 @router.get("/account/health", tags=["health"])
